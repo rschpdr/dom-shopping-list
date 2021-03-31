@@ -5,6 +5,7 @@ const mainItem = document.getElementById("main-item");
 const mainMinusBtn = mainItem.querySelector(".shopping-btn-minus");
 const mainPlusBtn = mainItem.querySelector(".shopping-btn-plus");
 
+// Adiciona os listeners nos botões de "+" e "-" do list item fixo (o que o usuário digita para criar novos itens)
 addListenerToButton(mainMinusBtn, "decrement");
 addListenerToButton(mainPlusBtn, "increment");
 
@@ -67,7 +68,8 @@ addItemBtn.addEventListener("click", () => {
 
   // Opção 1
 
-  shoppingList.innerHTML += newItem;
+  // shoppingList.innerHTML += newItem; // essa solução causa um bug, pois ela recria TODO o HTML da lista (a <ul></ul>) para poder adicionar um novo elemento, assim destruindo os event listeners que existiam nos itens anteriores. Para resolver esse problema, usamos:
+  shoppingList.insertAdjacentHTML("beforeend", newItem);
 
   // Opção 2
 
@@ -77,7 +79,6 @@ addItemBtn.addEventListener("click", () => {
 
   const allItems = shoppingList.querySelectorAll("li");
   const newlyCreatedItem = allItems[allItems.length - 1];
-  const newlyCreatedSpan = newlyCreatedItem.lastElementChild.children[1];
 
   // newItem.nextElementSibling.firstElementChild se refere ao botão de -
 
@@ -85,6 +86,8 @@ addItemBtn.addEventListener("click", () => {
     newlyCreatedItem.lastElementChild.firstElementChild,
     "decrement"
   );
+
+  // newItem.nextElementSibling.firstElementChild se refere ao botão de +
 
   addListenerToButton(
     newlyCreatedItem.lastElementChild.lastElementChild,
