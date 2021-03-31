@@ -1,6 +1,7 @@
 const shoppingList = document.getElementById("shopping-list");
 const addItemBtn = document.getElementById("add-item-btn");
 const mainItem = document.getElementById("main-item");
+const totalItems = document.getElementById("total-items");
 
 const mainMinusBtn = mainItem.querySelector(".shopping-btn-minus");
 const mainPlusBtn = mainItem.querySelector(".shopping-btn-plus");
@@ -30,6 +31,7 @@ addItemBtn.addEventListener("click", () => {
 
   // Opção 1
   const newItem = `<li>
+    <button class="shopping-btn-remove"><i class="fa fa-trash" aria-hidden="true"></i></button>
     <input class="shopping-item-text" placeholder="Digite um item" value="${currentItemText}" />
     <div>
       <button class="shopping-btn-minus">-</button>
@@ -68,8 +70,13 @@ addItemBtn.addEventListener("click", () => {
 
   // Opção 1
 
-  // shoppingList.innerHTML += newItem; // essa solução causa um bug, pois ela recria TODO o HTML da lista (a <ul></ul>) para poder adicionar um novo elemento, assim destruindo os event listeners que existiam nos itens anteriores. Para resolver esse problema, usamos:
+  //  shoppingList.innerHTML += newItem; // essa solução causa um bug, pois ela recria TODO o HTML da lista (a <ul></ul>) para poder adicionar um novo elemento, assim destruindo os event listeners que existiam nos itens anteriores. Para resolver esse problema, usamos:
   shoppingList.insertAdjacentHTML("beforeend", newItem);
+
+  // Limpando o texto do input fixo
+  mainItem.firstElementChild.value = "";
+  // Limpando a quantidade do input fixo
+  mainItem.lastElementChild.children[1].innerText = "0";
 
   // Opção 2
 
@@ -93,6 +100,13 @@ addItemBtn.addEventListener("click", () => {
     newlyCreatedItem.lastElementChild.lastElementChild,
     "increment"
   );
+
+  newlyCreatedItem.firstElementChild.addEventListener("click", () => {
+    shoppingList.removeChild(newlyCreatedItem);
+    calculateTotal();
+  });
+
+  calculateTotal();
 });
 
 // Extrair a lógica de adicionar os listeners de evento pra uma função reutilizável para podermos usar esta função em todos os botões da página
@@ -111,5 +125,20 @@ function addListenerToButton(button, type) {
     }
 
     span.innerText = currentQuantity;
+
+    calculateTotal();
   });
+}
+
+function calculateTotal() {
+  let total = 0;
+
+  const spans = document.getElementsByClassName("shopping-item-quantity");
+
+  for (let i = 0; i < spans.length; i++) {
+    const currentQuantity = parseInt(spans[i].innerText);
+    total += currentQuantity;
+  }
+
+  totalItems.innerText = total;
 }
